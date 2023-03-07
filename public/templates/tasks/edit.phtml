@@ -1,0 +1,73 @@
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/templates/components/_head.phtml' ?>
+<?php
+require_once $_SERVER['DOCUMENT_ROOT']
+    . '/templates/components/_navbar.phtml' ?>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h1 class="h2 text-center">Editing the task</h1>
+                        <form action="/tasks/<?= htmlspecialchars(
+                            $task->getId()
+                        ) ?>" method="post">
+                            <input type="hidden" name="_method" value="put">
+                            <div class="mb-3">
+                                <label for="inputUserName" class="form-label">User
+                                    name</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="inputUserName"
+                                       name="userName"
+                                       value="<?= htmlspecialchars(
+                                           $task->getUserName()
+                                       ) ?>"
+                                >
+                            </div>
+                            <div class="mb-3">
+                                <label for="inputUserEmail" class="form-label">User
+                                    email</label>
+                                <input type="email"
+                                       class="form-control"
+                                       id="inputUserEmail"
+                                       name="userEmail"
+                                       value="<?= htmlspecialchars(
+                                           $task->getUserEmail()
+                                       ) ?>"
+                                >
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="mb-3">
+                                    <label for="inputDescription"
+                                           class="form-label">Description</label>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="inputDescription"
+                                            name="description"
+                                            value="<?= htmlspecialchars(
+                                                $task->getDescription()
+                                            ) ?>">
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">
+                                    Save changes
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+                <?php
+                require_once $_SERVER['DOCUMENT_ROOT']
+                    . '/templates/components/_errors.phtml' ?>
+            </div>
+        </div>
+    </div>
+
+<?php
+require_once $_SERVER['DOCUMENT_ROOT']
+    . '/templates/components/_footer.phtml' ?>
