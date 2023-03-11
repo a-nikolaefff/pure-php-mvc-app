@@ -1,4 +1,5 @@
 <?php
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/templates/components/_head.phtml' ?>
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']
@@ -25,6 +26,7 @@ require_once $_SERVER['DOCUMENT_ROOT']
                                        ) ?>"
                                 >
                             </div>
+
                             <div class="mb-3">
                                 <label for="inputUserEmail" class="form-label">User
                                     email</label>
@@ -39,19 +41,39 @@ require_once $_SERVER['DOCUMENT_ROOT']
                             </div>
 
                             <div class="mb-3">
-                                <div class="mb-3">
-                                    <label for="inputDescription"
-                                           class="form-label">Description</label>
+                                <label for="inputDescription"
+                                       class="form-label">Description</label>
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        id="inputDescription"
+                                        name="description"
+                                        value="<?= htmlspecialchars(
+                                            $task->getDescription()
+                                        ) ?>">
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
                                     <input
-                                            type="text"
-                                            class="form-control"
-                                            id="inputDescription"
-                                            name="description"
-                                            value="<?= htmlspecialchars(
-                                                $task->getDescription()
-                                            ) ?>">
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            value=""
+                                            id="inputIsDone"
+                                            name="isDone"
+                                        <?php
+                                        if ($task->isDone()) : ?>
+                                            checked
+                                        <?php
+                                        endif ?>
+                                    >
+                                    <label class="form-check-label"
+                                           for="inputIsDone">
+                                        Task is done
+                                    </label>
                                 </div>
                             </div>
+
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">
                                     Save changes

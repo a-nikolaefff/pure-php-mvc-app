@@ -7,8 +7,8 @@ namespace App\Controller;
 use App\Controller\Core\Request\RequestInterface;
 use App\Controller\Core\Response\ResponseInterface;
 use App\Controller\Core\Session\SessionInterface;
+use App\Controller\Utilities\TaskValidator;
 use App\Entity\Task;
-use App\Model\Utilities\TaskValidator;
 
 class TaskUpdateController extends TaskController
 {
@@ -29,6 +29,7 @@ class TaskUpdateController extends TaskController
         $task->setUserName($requestBody['userName'] ?? '');
         $task->setUserEmail($requestBody['userEmail'] ?? '');
         $task->setDescription($requestBody['description'] ?? '');
+        $task->setIsDone(isset($requestBody['isDone']));
         $errors = TaskValidator::validate($task);
         if (count($errors) === 0) {
             $isUpdateSuccessful = $this->taskService->update($task);

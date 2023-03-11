@@ -1,7 +1,7 @@
 version: '3'
 services:
 
-#Nginx Server
+  #Nginx Server
   webserver:
     image: nginx
     container_name: "${PREFIX}webserver"
@@ -13,7 +13,7 @@ services:
     depends_on:
       - php
 
-#PHP
+  #PHP
   php:
     build:
       context: images/php
@@ -28,9 +28,10 @@ services:
       - ./config/php/php.ini:/usr/local/etc/php/conf.d/php.ini
       - ./config/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     depends_on:
-      - pgsql
+      pgsql:
+        condition: service_healthy
 
-#PostgreSQL
+  #PostgreSQL
   pgsql:
     image: postgres
     container_name: "${PREFIX}postgresql"
@@ -38,8 +39,13 @@ services:
       - "${PGSQL_PORT}:5432"
     volumes:
       - ./data/postgresql:/var/lib/postgresql/data
+      - ./scripts/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_USER: "${PGSQL_USER}"
       POSTGRES_PASSWORD: "${PGSQL_PASSWORD}"
       POSTGRES_DB: "${PGSQL_DB}"
-
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10

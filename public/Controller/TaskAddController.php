@@ -7,8 +7,8 @@ namespace App\Controller;
 use App\Controller\Core\Request\RequestInterface;
 use App\Controller\Core\Response\ResponseInterface;
 use App\Controller\Core\Session\SessionInterface;
+use App\Controller\Utilities\TaskValidator;
 use App\Entity\Task;
-use App\Model\Utilities\TaskValidator;
 
 class TaskAddController extends TaskController
 {

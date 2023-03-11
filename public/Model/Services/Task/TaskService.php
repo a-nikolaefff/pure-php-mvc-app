@@ -37,6 +37,7 @@ class TaskService implements TaskServiceInterface
 
     public function insert(Task $task): bool
     {
+        $task->setIsDone(false);
         $isInsertionSuccessful = $this->dbContext->getTaskRepository()->insert(
             $task
         );
@@ -48,19 +49,21 @@ class TaskService implements TaskServiceInterface
 
     public function update(Task $task): bool
     {
-        if ($this->dbContext->getTaskRepository()->get($task->getId())
-            === null
-        ) {
-            return false;
+        $isTaskExisting = $this->dbContext->getTaskRepository()->get(
+                $task->getId()
+            ) !== null;
+        if ($isTaskExisting) {
+            $isUpdateSuccessful = $this->dbContext->getTaskRepository()->update(
+                $task
+            );
+            if ($isUpdateSuccessful) {
+                $this->dbContext->saveChanges();
+            }
+            return $isUpdateSuccessful;
         }
-        $isUpdateSuccessful = $this->dbContext->getTaskRepository()->update(
-            $task
-        );
-        if ($isUpdateSuccessful) {
-            $this->dbContext->saveChanges();
-        }
-        return $isUpdateSuccessful;
+        return false;
     }
+
 
     public function delete(int $id): bool
     {

@@ -29,6 +29,7 @@ class TaskRepository implements TaskRepositoryInterface
             $task->setUserName($data['user_name']);
             $task->setUserEmail($data['user_email']);
             $task->setDescription($data['description']);
+            $task->setIsDone($data['is_done']);
             $tasks[] = $task;
         }
         return $tasks;
@@ -48,6 +49,7 @@ class TaskRepository implements TaskRepositoryInterface
             $task->setUserName($data['user_name']);
             $task->setUserEmail($data['user_email']);
             $task->setDescription($data['description']);
+            $task->setIsDone($data['is_done']);
             return $task;
         }
     }
@@ -56,13 +58,14 @@ class TaskRepository implements TaskRepositoryInterface
     {
         $this->connection->beginTransaction();
         $query = $this->connection->prepare(
-            "INSERT INTO tasks (user_name, user_email, description) 
-                    VALUES (:userName, :userEmail, :description)"
+            "INSERT INTO tasks (user_name, user_email, description, is_done) 
+                    VALUES (:userName, :userEmail, :description. :isDone)"
         );
         return $query->execute([
             'userName' => $task->getUserName(),
             'userEmail' => $task->getUserEmail(),
-            'description' => $task->getDescription()
+            'description' => $task->getDescription(),
+            'isDone' => $task->isDone() ? 'TRUE' : 'FALSE'
         ]);
     }
 
@@ -71,13 +74,14 @@ class TaskRepository implements TaskRepositoryInterface
         $this->connection->beginTransaction();
         $query = $this->connection->prepare(
             "UPDATE tasks 
-                    SET user_name = :userName, user_email = :userEmail, description = :description
+                    SET user_name = :userName, user_email = :userEmail, description = :description, is_done = :isDone
                     WHERE id = :id"
         );
         return $query->execute([
             'userName' => $task->getUserName(),
             'userEmail' => $task->getUserEmail(),
             'description' => $task->getDescription(),
+            'isDone' => $task->isDone() ? 'TRUE' : 'FALSE',
             'id' => $task->getId()
         ]);
     }
