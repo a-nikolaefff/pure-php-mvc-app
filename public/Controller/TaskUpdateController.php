@@ -9,6 +9,7 @@ use App\Controller\Core\Response\ResponseInterface;
 use App\Controller\Core\Session\SessionInterface;
 use App\Controller\Utilities\TaskValidator;
 use App\Entity\Task;
+use Exception;
 
 class TaskUpdateController extends TaskController
 {
@@ -32,7 +33,12 @@ class TaskUpdateController extends TaskController
         $task->setIsDone(isset($requestBody['isDone']));
         $errors = TaskValidator::validate($task);
         if (count($errors) === 0) {
-            $isUpdateSuccessful = $this->taskService->update($task);
+            $isUpdateSuccessful = false;
+            try {
+                $isUpdateSuccessful = $this->taskService->update($task);
+            } catch (Exception $e) {
+                $errors[] = $e->getMessage();
+            }
             if ($isUpdateSuccessful) {
                 return $response->withRedirect('/tasks');
             } else {

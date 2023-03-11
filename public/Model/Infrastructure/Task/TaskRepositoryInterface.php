@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Model\Infrastructure\Task;
 
 use App\Entity\Task;
+use Exception;
 
 interface TaskRepositoryInterface
 {
@@ -12,6 +13,7 @@ interface TaskRepositoryInterface
      * Get all tasks
      *
      * @return array<Task>
+     * @throws Exception
      */
     public function getAll(): array;
 
@@ -20,6 +22,7 @@ interface TaskRepositoryInterface
      *
      * @param int $id The ID of the task
      *
+     * @throws Exception
      * @return ?Task Task with given ID
      */
     public function get(int $id): ?Task;

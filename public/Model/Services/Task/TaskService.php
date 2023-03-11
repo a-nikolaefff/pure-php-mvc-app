@@ -6,6 +6,7 @@ namespace App\Model\Services\Task;
 
 use App\Entity\Task;
 use App\Model\Infrastructure\UnitOfWork;
+use DateTime;
 
 /**
  * An object that encapsulates actions with tasks
@@ -22,9 +23,6 @@ class TaskService implements TaskServiceInterface
         $this->dbContext = $dbContext;
     }
 
-    /**
-     * @return array<Task>
-     */
     public function getAll(): array
     {
         return $this->dbContext->getTaskRepository()->getAll();
@@ -38,6 +36,7 @@ class TaskService implements TaskServiceInterface
     public function insert(Task $task): bool
     {
         $task->setIsDone(false);
+        $task->setCreatedAt(new DateTime());
         $isInsertionSuccessful = $this->dbContext->getTaskRepository()->insert(
             $task
         );
@@ -46,6 +45,7 @@ class TaskService implements TaskServiceInterface
         }
         return $isInsertionSuccessful;
     }
+
 
     public function update(Task $task): bool
     {

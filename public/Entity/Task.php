@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+
 class Task
 {
     private ?int $id;
@@ -11,6 +13,7 @@ class Task
     private string $userEmail;
     private string $description;
     private bool $isDone;
+    private DateTime $createdAt;
 
     /**
      * @param ?int $id
@@ -53,6 +56,14 @@ class Task
     }
 
     /**
+     * @param DateTime $createdAt
+     */
+    public function setCreatedAt(DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -90,5 +101,13 @@ class Task
     public function isDone(): bool
     {
         return $this->isDone;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
     }
 }

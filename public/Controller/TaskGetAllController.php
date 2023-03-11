@@ -9,6 +9,7 @@ use App\Controller\Core\Response\ResponseInterface;
 use App\Controller\Core\Session\SessionInterface;
 use App\Model\Services\Task\TaskServiceInterface;
 use App\View\RendererInterface;
+use Exception;
 
 class TaskGetAllController extends TaskController
 {
@@ -26,10 +27,16 @@ class TaskGetAllController extends TaskController
     ): ResponseInterface {
         $session->start();
         $adminName = $session->get('admin-name');
-        $tasks = $this->taskService->getAll();
+        $errors = [];
+        try {
+            $tasks = $this->taskService->getAll();
+        } catch (Exception $e) {
+            $errors[] = $e->getMessage();
+        }
         $params = [
             'adminName' => $adminName,
-            'tasks' => $tasks
+            'tasks' => $tasks,
+            'errors' => $errors
         ];
         return $response->withBody(
             $this->renderer->render('tasks/index', $params)

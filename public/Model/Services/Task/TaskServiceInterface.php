@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Model\Services\Task;
 
 use App\Entity\Task;
+use Exception;
 
 interface TaskServiceInterface
 {
@@ -12,6 +13,7 @@ interface TaskServiceInterface
      * Get all tasks
      *
      * @return array<Task>
+     * @throws Exception
      */
     public function getAll(): array;
 
@@ -39,6 +41,7 @@ interface TaskServiceInterface
      * @param Task $task
      *
      * @return bool TRUE on success or FALSE on failure.
+     * @throws Exception
      */
     public function update(Task $task): bool;
 

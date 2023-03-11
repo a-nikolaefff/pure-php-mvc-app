@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Model\Infrastructure\Task;
 
 use App\Entity\Task;
+use DateTime;
+use DateTimeZone;
+use Exception;
 use PDO;
 
 /**
@@ -19,18 +22,14 @@ class TaskRepository implements TaskRepositoryInterface
         $this->connection = $connection;
     }
 
+
     public function getAll(): array
     {
         $query = $this->connection->prepare("SELECT * FROM tasks");
         $query->execute();
         $tasks = [];
         while (false !== $data = $query->fetch(PDO::FETCH_ASSOC)) {
-            $task = new Task($data['id']);
-            $task->setUserName($data['user_name']);
-            $task->setUserEmail($data['user_email']);
-            $task->setDescription($data['description']);
-            $task->setIsDone($data['is_done']);
-            $tasks[] = $task;
+            $tasks[] = $this->parseTask($data);
         }
         return $tasks;
     }
@@ -45,12 +44,7 @@ class TaskRepository implements TaskRepositoryInterface
         if (empty($data)) {
             return null;
         } else {
-            $task = new Task($data['id']);
-            $task->setUserName($data['user_name']);
-            $task->setUserEmail($data['user_email']);
-            $task->setDescription($data['description']);
-            $task->setIsDone($data['is_done']);
-            return $task;
+            return $this->parseTask($data);
         }
     }
 
@@ -58,14 +52,15 @@ class TaskRepository implements TaskRepositoryInterface
     {
         $this->connection->beginTransaction();
         $query = $this->connection->prepare(
-            "INSERT INTO tasks (user_name, user_email, description, is_done) 
-                    VALUES (:userName, :userEmail, :description. :isDone)"
+            "INSERT INTO tasks (user_name, user_email, description, is_done, created_at) 
+                    VALUES (:userName, :userEmail, :description, :isDone, :createdAt)"
         );
         return $query->execute([
             'userName' => $task->getUserName(),
             'userEmail' => $task->getUserEmail(),
             'description' => $task->getDescription(),
-            'isDone' => $task->isDone() ? 'TRUE' : 'FALSE'
+            'isDone' => $task->isDone() ? 'TRUE' : 'FALSE',
+            'createdAt' => $task->getCreatedAt()->format('Y-m-d H:i:s.u')
         ]);
     }
 
@@ -91,5 +86,24 @@ class TaskRepository implements TaskRepositoryInterface
         $this->connection->beginTransaction();
         $query = $this->connection->prepare("DELETE FROM tasks WHERE id = :id");
         return $query->execute(['id' => $id]);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return Task
+     * @throws Exception
+     */
+    private function parseTask(array $data): Task
+    {
+        $task = new Task($data['id']);
+        $task->setUserName($data['user_name']);
+        $task->setUserEmail($data['user_email']);
+        $task->setDescription($data['description']);
+        $task->setIsDone($data['is_done']);
+        $createdAt = new DateTime($data['created_at']);
+        $createdAt->setTimezone(new DateTimeZone('Europe/Moscow'));
+        $task->setCreatedAt($createdAt);
+        return $task;
     }
 }

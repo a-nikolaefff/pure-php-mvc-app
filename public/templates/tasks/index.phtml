@@ -21,6 +21,7 @@ require_once $_SERVER['DOCUMENT_ROOT']
 
             <table class="table table-striped align-middle">
                 <tr>
+                    <td>Created at</td>
                     <td>User name</td>
                     <td>User email</td>
                     <td>Description</td>
@@ -35,6 +36,9 @@ require_once $_SERVER['DOCUMENT_ROOT']
                 <?php
                 foreach ($tasks as $task) : ?>
                     <tr>
+                        <td>
+                            <?= htmlspecialchars($task->getCreatedAt()->format('Y-m-d H:i:s')) ?>
+                        </td>
                         <td>
                             <?= htmlspecialchars($task->getUserName()) ?>
                         </td>
