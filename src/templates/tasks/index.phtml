@@ -1,0 +1,141 @@
+<div class="row">
+    <div class="col">
+        <h1 class="mb-3">Tasks</h1>
+        <div class="mb-3">
+            <a href="/tasks/new">
+                <button class="btn btn-primary">Add new task</button>
+            </a>
+        </div>
+
+        <?php
+        require_once '/var/www/src/templates/_errors.phtml' ?>
+
+        <table class="table table-striped align-middle">
+            <tr>
+                <td>Created at</td>
+                <td>User name</td>
+                <td>User email</td>
+                <td>Description</td>
+                <td>Status</td>
+                <?php
+                if (isset($adminName)) : ?>
+                    <td colspan="2" class="text-center">Actions</td>
+                <?php
+                endif ?>
+            </tr>
+
+            <?php
+            foreach ($tasks as $task) : ?>
+                <tr>
+                    <td>
+                        <?= htmlspecialchars(
+                            $task->getCreatedAt()->format('Y-m-d H:i:s')
+                        ) ?>
+                    </td>
+                    <td>
+                        <?= htmlspecialchars($task->getUserName()) ?>
+                    </td>
+                    <td>
+                        <?= htmlspecialchars($task->getUserEmail()) ?>
+                    </td>
+                    <td>
+                        <?= htmlspecialchars($task->getDescription()) ?>
+                    </td>
+
+                    <?php
+                    if ($task->isDone()) : ?>
+                        <td class="text-success">
+                            DONE
+                        </td>
+                    <?php
+                    else : ?>
+                        <td class="text-primary">
+                            CREATED
+                        </td>
+                    <?php
+                    endif ?>
+
+                    <?php
+                    if (isset($adminName)) : ?>
+                        <td>
+                            <a href="/tasks/<?= htmlspecialchars(
+                                $task->getId()
+                            ) ?>/edit">
+                                <button class="btn btn-outline-primary">
+                                    Edit
+                                </button>
+                            </a>
+                        </td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-outline-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal<?= htmlspecialchars(
+                                        $task->getId()
+                                    ) ?>">
+                                Delete
+                            </button>
+                            <div class="modal fade"
+                                 id="exampleModal<?= htmlspecialchars(
+                                     $task->getId()
+                                 ) ?>"
+                                 tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"
+                                                id="exampleModalLabel">
+                                                Warning</h5>
+                                            <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete
+                                            the task?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                            <form class="form"
+                                                  action="/tasks/<?= htmlspecialchars(
+                                                      $task->getId()
+                                                  ) ?>"
+                                                  method="post">
+                                                <input type="hidden"
+                                                       name="_method"
+                                                       value="delete">
+                                                <div class="text-center">
+                                                    <button type="submit"
+                                                            class="btn btn-danger">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    <?php
+                    endif ?>
+                </tr>
+            <?php
+            endforeach ?>
+
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+

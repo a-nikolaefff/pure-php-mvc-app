@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-namespace App;
-
 use App\Controller\Core\Application;
 use App\Controller\Core\Request\RequestInterface;
 use App\Controller\Core\Response\ResponseInterface;
@@ -24,7 +22,6 @@ use App\Model\Infrastructure\UnitOfWork;
 use App\Model\Services\Admin\AdminService;
 use App\Model\Services\Task\TaskService;
 use App\View\Renderer;
-use PDO;
 
 require_once "../vendor/autoload.php";
 
@@ -46,7 +43,7 @@ $dbContext->setTaskRepository($taskRepository);
 $adminService = new AdminService($dbContext);
 $taskService = new TaskService($dbContext);
 
-$renderer = new Renderer($_SERVER['DOCUMENT_ROOT'] . '/templates');
+$renderer = new Renderer('/var/www/src/templates', '_layout');
 
 $indexController = new IndexController($renderer);
 $sessionCreatePageController = new SessionCreatePageController($renderer);
