@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Model\Infrastructure\Task;
 
+use App\Dto\SortingCriterion;
+use App\Dto\SortingOrder;
 use App\Entity\Task;
+
 use Exception;
 
 interface TaskRepositoryInterface
@@ -12,18 +15,24 @@ interface TaskRepositoryInterface
     /**
      * Get all tasks
      *
+     * @param SortingCriterion $sortingCriterion
+     * @param SortingOrder     $sortingOrder
+     *
      * @return array<Task>
      * @throws Exception
      */
-    public function getAll(): array;
+    public function getAll(
+        SortingCriterion $sortingCriterion,
+        SortingOrder $sortingOrder
+    ): array;
 
     /**
      * Get a task by ID
      *
      * @param int $id The ID of the task
      *
-     * @throws Exception
      * @return ?Task Task with given ID
+     * @throws Exception
      */
     public function get(int $id): ?Task;
 

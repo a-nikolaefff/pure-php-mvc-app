@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Model\Infrastructure\Task;
 
+use App\Dto\SortingCriterion;
+use App\Dto\SortingOrder;
 use App\Entity\Task;
+
 use DateTime;
 use DateTimeZone;
 use Exception;
@@ -23,9 +26,24 @@ class TaskRepository implements TaskRepositoryInterface
     }
 
 
-    public function getAll(): array
-    {
-        $query = $this->connection->prepare("SELECT * FROM tasks");
+    public function getAll(
+        SortingCriterion $sortingCriterion,
+        SortingOrder $sortingOrder
+    ): array {
+        $sortBy = match ($sortingCriterion) {
+            SortingCriterion::UserName => 'user_name',
+            SortingCriterion::UserEmail => 'user_email',
+            SortingCriterion::Description => 'description',
+            SortingCriterion::IsDone => 'is_done',
+            SortingCriterion::CreatedAt => 'created_at',
+        };
+        $orderBy = match ($sortingOrder) {
+            SortingOrder::ASC => 'ASC',
+            SortingOrder::DESC => 'DESC',
+        };
+        $query = $this->connection->prepare(
+            "SELECT * FROM tasks ORDER BY $sortBy $orderBy"
+        );
         $query->execute();
         $tasks = [];
         while (false !== $data = $query->fetch(PDO::FETCH_ASSOC)) {

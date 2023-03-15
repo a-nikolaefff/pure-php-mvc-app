@@ -1,3 +1,10 @@
+<?php
+
+use App\Dto\SortingCriterion;
+use App\Dto\SortingOrder;
+
+?>
+
 <div class="row">
     <div class="col">
         <h1 class="mb-3">Tasks</h1>
@@ -12,123 +19,175 @@
 
         <table class="table table-striped align-middle">
             <tr>
-                <td>Created at</td>
-                <td>User name</td>
-                <td>User email</td>
-                <td>Description</td>
-                <td>Status</td>
+                <th>
+                    <?php if ($sortBy === SortingCriterion::CreatedAt) { ?>
+                        <?php if ($orderBy === SortingOrder::ASC) { ?>
+                            <a href="/tasks?sort=created_at&order=desc">Created At &#9660;</a>
+                        <?php } else { ?>
+                            <a href="/tasks?sort=created_at&order=asc">Created At &#9650;</a>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <a href="/tasks?sort=created_at&order=asc">Created At</a>
+                    <?php } ?>
+                </th>
+                <th>
+                    <?php if ($sortBy === SortingCriterion::UserName) { ?>
+                        <?php if ($orderBy === SortingOrder::ASC) { ?>
+                            <a href="/tasks?sort=user_name&order=desc">User name &#9660;</a>
+                        <?php } else { ?>
+                            <a href="/tasks?sort=user_name&order=asc">User name &#9650;</a>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <a href="/tasks?sort=user_name&order=asc">User name</a>
+                    <?php } ?>
+                </th>
+                <th>
+                    <?php if ($sortBy === SortingCriterion::UserEmail) { ?>
+                        <?php if ($orderBy === SortingOrder::ASC) { ?>
+                            <a href="/tasks?sort=user_email&order=desc">User email &#9660;</a>
+                        <?php } else { ?>
+                            <a href="/tasks?sort=user_email&order=asc">User email &#9650;</a>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <a href="/tasks?sort=user_email&order=asc">User email</a>
+                    <?php } ?>
+                </th>
+                <th>
+                    <?php if ($sortBy === SortingCriterion::Description) { ?>
+                        <?php if ($orderBy === SortingOrder::ASC) { ?>
+                            <a href="/tasks?sort=description&order=desc">Description &#9660;</a>
+                        <?php } else { ?>
+                            <a href="/tasks?sort=description&order=asc">Description &#9650;</a>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <a href="/tasks?sort=description&order=asc">Description</a>
+                    <?php } ?>
+                </th>
+                <th>
+                    <?php if ($sortBy === SortingCriterion::IsDone) { ?>
+                        <?php if ($orderBy === SortingOrder::ASC) { ?>
+                            <a href="/tasks?sort=is_done&order=desc">Status &#9660;</a>
+                        <?php } else { ?>
+                            <a href="/tasks?sort=is_done&order=asc">Status &#9650;</a>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <a href="/tasks?sort=is_done&order=asc">Status</a>
+                    <?php } ?>
+                </th>
                 <?php
                 if (isset($adminName)) : ?>
                     <td colspan="2" class="text-center">Actions</td>
                 <?php
                 endif ?>
             </tr>
-
             <?php
-            foreach ($tasks as $task) : ?>
-                <tr>
-                    <td>
-                        <?= htmlspecialchars(
-                            $task->getCreatedAt()->format('Y-m-d H:i:s')
-                        ) ?>
-                    </td>
-                    <td>
-                        <?= htmlspecialchars($task->getUserName()) ?>
-                    </td>
-                    <td>
-                        <?= htmlspecialchars($task->getUserEmail()) ?>
-                    </td>
-                    <td>
-                        <?= htmlspecialchars($task->getDescription()) ?>
-                    </td>
-
-                    <?php
-                    if ($task->isDone()) : ?>
-                        <td class="text-success">
-                            DONE
-                        </td>
-                    <?php
-                    else : ?>
-                        <td class="text-primary">
-                            CREATED
-                        </td>
-                    <?php
-                    endif ?>
-
-                    <?php
-                    if (isset($adminName)) : ?>
+            if (isset($tasks)) : ?>
+                <?php
+                foreach ($tasks as $task) : ?>
+                    <tr>
                         <td>
-                            <a href="/tasks/<?= htmlspecialchars(
-                                $task->getId()
-                            ) ?>/edit">
-                                <button class="btn btn-outline-primary">
-                                    Edit
+                            <?= htmlspecialchars(
+                                $task->getCreatedAt()->format('Y-m-d H:i:s')
+                            ) ?>
+                        </td>
+                        <td>
+                            <?= htmlspecialchars($task->getUserName()) ?>
+                        </td>
+                        <td>
+                            <?= htmlspecialchars($task->getUserEmail()) ?>
+                        </td>
+                        <td>
+                            <?= htmlspecialchars($task->getDescription()) ?>
+                        </td>
+
+                        <?php
+                        if ($task->isDone()) : ?>
+                            <td class="text-success">
+                                DONE
+                            </td>
+                        <?php
+                        else : ?>
+                            <td class="text-primary">
+                                CREATED
+                            </td>
+                        <?php
+                        endif ?>
+
+                        <?php
+                        if (isset($adminName)) : ?>
+                            <td>
+                                <a href="/tasks/<?= htmlspecialchars(
+                                    $task->getId()
+                                ) ?>/edit">
+                                    <button class="btn btn-outline-primary">
+                                        Edit
+                                    </button>
+                                </a>
+                            </td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal<?= htmlspecialchars(
+                                            $task->getId()
+                                        ) ?>">
+                                    Delete
                                 </button>
-                            </a>
-                        </td>
-                        <td>
-                            <button type="button"
-                                    class="btn btn-outline-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal<?= htmlspecialchars(
-                                        $task->getId()
-                                    ) ?>">
-                                Delete
-                            </button>
-                            <div class="modal fade"
-                                 id="exampleModal<?= htmlspecialchars(
-                                     $task->getId()
-                                 ) ?>"
-                                 tabindex="-1"
-                                 aria-labelledby="exampleModalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title"
-                                                id="exampleModalLabel">
-                                                Warning</h5>
-                                            <button type="button"
-                                                    class="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Are you sure you want to delete
-                                            the task?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button"
-                                                    class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">
-                                                Cancel
-                                            </button>
-                                            <form class="form"
-                                                  action="/tasks/<?= htmlspecialchars(
-                                                      $task->getId()
-                                                  ) ?>"
-                                                  method="post">
-                                                <input type="hidden"
-                                                       name="_method"
-                                                       value="delete">
-                                                <div class="text-center">
-                                                    <button type="submit"
-                                                            class="btn btn-danger">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </form>
+                                <div class="modal fade"
+                                     id="exampleModal<?= htmlspecialchars(
+                                         $task->getId()
+                                     ) ?>"
+                                     tabindex="-1"
+                                     aria-labelledby="exampleModalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title"
+                                                    id="exampleModalLabel">
+                                                    Warning</h5>
+                                                <button type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete
+                                                the task?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button"
+                                                        class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">
+                                                    Cancel
+                                                </button>
+                                                <form class="form"
+                                                      action="/tasks/<?= htmlspecialchars(
+                                                          $task->getId()
+                                                      ) ?>"
+                                                      method="post">
+                                                    <input type="hidden"
+                                                           name="_method"
+                                                           value="delete">
+                                                    <div class="text-center">
+                                                        <button type="submit"
+                                                                class="btn btn-danger">
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </td>
-                    <?php
-                    endif ?>
-                </tr>
+                            </td>
+                        <?php
+                        endif ?>
+                    </tr>
+                <?php
+                endforeach ?>
             <?php
-            endforeach ?>
-
+            endif ?>
         </table>
     </div>
 </div>

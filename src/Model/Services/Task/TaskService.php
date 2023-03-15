@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Model\Services\Task;
 
+use App\Dto\SortingCriterion;
+use App\Dto\SortingOrder;
 use App\Entity\Task;
 use App\Model\Infrastructure\UnitOfWork;
 use DateTime;
@@ -23,9 +25,11 @@ class TaskService implements TaskServiceInterface
         $this->dbContext = $dbContext;
     }
 
-    public function getAll(): array
-    {
-        return $this->dbContext->getTaskRepository()->getAll();
+    public function getAll(
+        SortingCriterion $sortingCriterion,
+        SortingOrder $sortingOrder
+    ): array {
+        return $this->dbContext->getTaskRepository()->getAll($sortingCriterion, $sortingOrder);
     }
 
     public function get(int $id): ?Task
