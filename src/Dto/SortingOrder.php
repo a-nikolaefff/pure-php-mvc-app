@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-enum SortingOrder
+enum SortingOrder: string
 {
-    case ASC;
-    case DESC;
+    case ASC = 'asc';
+    case DESC = 'desc';
 }

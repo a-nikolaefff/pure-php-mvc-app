@@ -22,7 +22,8 @@ class TaskAddController extends TaskController
         $task->setUserName($requestBody['userName'] ?? '');
         $task->setUserEmail($requestBody['userEmail'] ?? '');
         $task->setDescription($requestBody['description'] ?? '');
-        $errors = TaskValidator::validate($task);
+        $taskValidator = new TaskValidator($task);
+        $errors = $taskValidator->validateNewTask();
         if (count($errors) === 0) {
             $isInsertionSuccessful = $this->taskService->insert($task);
             if ($isInsertionSuccessful) {

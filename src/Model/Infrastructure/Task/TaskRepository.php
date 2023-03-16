@@ -26,23 +26,35 @@ class TaskRepository implements TaskRepositoryInterface
     }
 
 
+    public function getTotalCount(): int
+    {
+        $query = $this->connection->prepare(
+            "SELECT COUNT(*) FROM tasks"
+        );
+        $query->execute();
+        return $query->fetch(PDO::FETCH_ASSOC)['count'];
+    }
+
     public function getAll(
         SortingCriterion $sortingCriterion,
-        SortingOrder $sortingOrder
+        SortingOrder $sortingOrder,
+        int $page,
+        int $limit
     ): array {
+        $offset = ($page - 1) * $limit;
         $sortBy = match ($sortingCriterion) {
-            SortingCriterion::UserName => 'user_name',
-            SortingCriterion::UserEmail => 'user_email',
-            SortingCriterion::Description => 'description',
-            SortingCriterion::IsDone => 'is_done',
-            SortingCriterion::CreatedAt => 'created_at',
+            SortingCriterion::USER_NAME => 'user_name',
+            SortingCriterion::USER_EMAIL => 'user_email',
+            SortingCriterion::DESCRIPTION => 'description',
+            SortingCriterion::IS_DONE => 'is_done',
+            SortingCriterion::CREATED_AT => 'created_at',
         };
         $orderBy = match ($sortingOrder) {
             SortingOrder::ASC => 'ASC',
             SortingOrder::DESC => 'DESC',
         };
         $query = $this->connection->prepare(
-            "SELECT * FROM tasks ORDER BY $sortBy $orderBy"
+            "SELECT * FROM tasks ORDER BY $sortBy $orderBy LIMIT $limit OFFSET $offset"
         );
         $query->execute();
         $tasks = [];
@@ -87,12 +99,10 @@ class TaskRepository implements TaskRepositoryInterface
         $this->connection->beginTransaction();
         $query = $this->connection->prepare(
             "UPDATE tasks 
-                    SET user_name = :userName, user_email = :userEmail, description = :description, is_done = :isDone
+                    SET description = :description, is_done = :isDone
                     WHERE id = :id"
         );
         return $query->execute([
-            'userName' => $task->getUserName(),
-            'userEmail' => $task->getUserEmail(),
             'description' => $task->getDescription(),
             'isDone' => $task->isDone() ? 'TRUE' : 'FALSE',
             'id' => $task->getId()

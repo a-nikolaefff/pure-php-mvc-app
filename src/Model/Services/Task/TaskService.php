@@ -25,11 +25,23 @@ class TaskService implements TaskServiceInterface
         $this->dbContext = $dbContext;
     }
 
+    public function getTotalCount(): int
+    {
+        return $this->dbContext->getTaskRepository()->getTotalCount();
+    }
+
     public function getAll(
         SortingCriterion $sortingCriterion,
-        SortingOrder $sortingOrder
+        SortingOrder $sortingOrder,
+        int $page,
+        int $limit
     ): array {
-        return $this->dbContext->getTaskRepository()->getAll($sortingCriterion, $sortingOrder);
+        return $this->dbContext->getTaskRepository()->getAll(
+            $sortingCriterion,
+            $sortingOrder,
+            $page,
+            $limit
+        );
     }
 
     public function get(int $id): ?Task

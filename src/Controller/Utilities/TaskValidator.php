@@ -8,32 +8,70 @@ use App\Entity\Task;
 
 class TaskValidator
 {
+    private Task $task;
+    private array $errors = [];
+
     /**
-     * Validate a task before saving into the database
+     * @param Task $task
+     */
+    public function __construct(Task $task)
+    {
+        $this->task = $task;
+    }
+
+    /**
+     * Validate a new task before saving into the database
      *
      * @param Task $task
      *
      * @return array<string> Found errors
      */
-    public static function validate(Task $task): array
+    public function validateNewTask(): array
     {
-        $userName = $task->getUserName();
-        $userEmail = $task->getUserEmail();
-        $description = $task->getDescription();
-        $errors = [];
+        $this->checkUserName();
+        $this->checkUserEmail();
+        $this->checkDescription();
+        return $this->errors;
+    }
+
+    /**
+     * Validate a task to update before saving into the database
+     *
+     * @param Task $task
+     *
+     * @return array<string> Found errors
+     */
+    public function validateUpdatingTask(): array
+    {
+        $this->checkDescription();
+        return $this->errors;
+    }
+
+    private function checkUserName(): void
+    {
+        $userName = $this->task->getUserName();
         if (empty($userName)) {
-            $errors[] = "Field \"User name\" cannot be empty";
+            $this->errors[] = "Field \"User name\" cannot be empty";
         }
+    }
+
+    private function checkUserEmail(): void
+    {
+        $userEmail = $this->task->getUserEmail();
         if (empty($userEmail)) {
-            $errors[] = "Field \"User email\" cannot be empty";
+            $this->errors[] = "Field \"User email\" cannot be empty";
         } else {
             if (!filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-                $errors[] = "Email address '$userEmail' is invalid";
+                $this->errors[] = "Email address '$userEmail' is invalid";
             }
         }
+    }
+
+    private function checkDescription(): void
+    {
+        $description = $this->task->getDescription();
         if (empty($description)) {
-            $errors[] = "Field \"Description\" cannot be empty";
+            $this->errors[] = "Field \"Description\" cannot be empty";
         }
-        return $errors;
     }
 }

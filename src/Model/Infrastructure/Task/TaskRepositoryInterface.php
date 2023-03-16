@@ -12,6 +12,14 @@ use Exception;
 
 interface TaskRepositoryInterface
 {
+
+    /**
+     * Get total count of tasks
+     *
+     * @return int
+     */
+    public function getTotalCount(): int;
+
     /**
      * Get all tasks
      *
@@ -23,7 +31,9 @@ interface TaskRepositoryInterface
      */
     public function getAll(
         SortingCriterion $sortingCriterion,
-        SortingOrder $sortingOrder
+        SortingOrder $sortingOrder,
+        int $page,
+        int $limit
     ): array;
 
     /**

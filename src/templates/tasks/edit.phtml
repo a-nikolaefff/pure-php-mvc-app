@@ -3,47 +3,39 @@
         <div class="card mb-3">
             <div class="card-body">
                 <h1 class="h2 text-center">Editing the task</h1>
+
+                <table class="table align-middle">
+                    <tr>
+                        <td>User name</td>
+                        <td><?= htmlspecialchars($task->getUserName()) ?></td>
+                    </tr>
+                    <tr>
+                        <td>User email</td>
+                        <td><?= htmlspecialchars($task->getUserEmail()) ?></td>
+                    </tr>
+                    <tr>
+                        <td>Created At</td>
+                        <td><?= htmlspecialchars(
+                                $task->getCreatedAt()->format('Y-m-d H:i:s')
+                            ) ?></td>
+                    </tr>
+                </table>
+
                 <form action="/tasks/<?= htmlspecialchars(
                     $task->getId()
                 ) ?>" method="post">
                     <input type="hidden" name="_method" value="put">
                     <div class="mb-3">
-                        <label for="inputUserName" class="form-label">User
-                            name</label>
-                        <input type="text"
-                               class="form-control"
-                               id="inputUserName"
-                               name="userName"
-                               value="<?= htmlspecialchars(
-                                   $task->getUserName()
-                               ) ?>"
-                        >
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="inputUserEmail" class="form-label">User
-                            email</label>
-                        <input type="email"
-                               class="form-control"
-                               id="inputUserEmail"
-                               name="userEmail"
-                               value="<?= htmlspecialchars(
-                                   $task->getUserEmail()
-                               ) ?>"
-                        >
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="inputDescription"
+                        <label for="DescriptionTextarea"
                                class="form-label">Description</label>
-                        <input
-                                type="text"
+                        <textarea
                                 class="form-control"
-                                id="inputDescription"
-                                name="description"
-                                value="<?= htmlspecialchars(
-                                    $task->getDescription()
-                                ) ?>">
+                                rows="5"
+                                id="DescriptionTextarea"
+                                name="description"><?= htmlspecialchars(
+                                $task->getDescription()
+                            ) ?>
+                        </textarea>
                     </div>
 
                     <div class="mb-3">
@@ -62,7 +54,7 @@
                             >
                             <label class="form-check-label"
                                    for="inputIsDone">
-                                Task is done
+                                Mark the task as done
                             </label>
                         </div>
                     </div>

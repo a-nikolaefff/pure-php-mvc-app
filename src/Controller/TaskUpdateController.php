@@ -27,11 +27,10 @@ class TaskUpdateController extends TaskController
         $id = (int)$request->getAttribute("id");
         $task = new Task($id);
         $requestBody = $request->getBody();
-        $task->setUserName($requestBody['userName'] ?? '');
-        $task->setUserEmail($requestBody['userEmail'] ?? '');
         $task->setDescription($requestBody['description'] ?? '');
         $task->setIsDone(isset($requestBody['isDone']));
-        $errors = TaskValidator::validate($task);
+        $taskValidator = new TaskValidator($task);
+        $errors = $taskValidator->validateUpdatingTask();
         if (count($errors) === 0) {
             $isUpdateSuccessful = false;
             try {

@@ -12,6 +12,13 @@ use Exception;
 interface TaskServiceInterface
 {
     /**
+     * Get total count of tasks
+     *
+     * @return int
+     */
+    public function getTotalCount(): int;
+
+    /**
      * Get all tasks
      *
      * @return array<Task>
@@ -19,7 +26,9 @@ interface TaskServiceInterface
      */
     public function getAll(
         SortingCriterion $sortingCriterion,
-        SortingOrder $sortingOrder
+        SortingOrder $sortingOrder,
+        int $page,
+        int $limit
     ): array;
 
     /**

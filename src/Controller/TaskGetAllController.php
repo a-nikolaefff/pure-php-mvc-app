@@ -15,6 +15,10 @@ use Exception;
 
 class TaskGetAllController extends TaskController
 {
+    private const DEFAULT_SORT_BY = SortingCriterion::CREATED_AT;
+    private const DEFAULT_ORDER_BY = SortingOrder::ASC;
+    private const DEFAULT_TASKS_PER_PAGE = 5;
+
     public function __construct(
         RendererInterface $render,
         TaskServiceInterface $taskService
@@ -30,23 +34,32 @@ class TaskGetAllController extends TaskController
         $session->start();
         $adminName = $session->get('admin-name');
         $queryParams = $request->getQueryParams();
-        $sortingCriterion = match ($queryParams['sort'] ?? 'created_at') {
-            'user_name' => SortingCriterion::UserName,
-            'user_email' => SortingCriterion::UserEmail,
-            'description' => SortingCriterion::Description,
-            'is_done' => SortingCriterion::IsDone,
-            default => SortingCriterion::CreatedAt,
-        };
-        $sortingOrder = match ($queryParams['order'] ?? 'asc') {
-            'desc' => SortingOrder::DESC,
-            default => SortingOrder::ASC
-        };
+
+        $sortingCriterion = self::DEFAULT_SORT_BY;
+        if (isset($queryParams['sort'])) {
+            $sortingCriterion = SortingCriterion::tryFrom($queryParams['sort'])
+                ?? $sortingCriterion;
+        }
+        $sortingOrder = self::DEFAULT_ORDER_BY;
+        if (isset($queryParams['order'])) {
+            $sortingOrder = SortingOrder::tryFrom($queryParams['order']) ??
+                $sortingOrder;
+        }
+
+        $limit = $queryParams['limit'] ?? self::DEFAULT_TASKS_PER_PAGE;
+        $taskTotalCount = $this->taskService->getTotalCount();
+        $pageTotalCount = (int)ceil($taskTotalCount / $limit);
+        $page = (int)max((int)($queryParams['page'] ?? 1), 1);
+        $page = (int)min($page, $pageTotalCount);
+
         $errors = [];
         $tasks = [];
         try {
             $tasks = $this->taskService->getAll(
                 $sortingCriterion,
-                $sortingOrder
+                $sortingOrder,
+                $page,
+                $limit
             );
         } catch (Exception $e) {
             $errors[] = $e->getMessage();
@@ -56,6 +69,8 @@ class TaskGetAllController extends TaskController
             'tasks' => $tasks,
             'sortBy' => $sortingCriterion,
             'orderBy' => $sortingOrder,
+            'currentPage' => $page,
+            'pageTotalCount' => $pageTotalCount,
             'errors' => $errors
         ];
         return $response->withBody(

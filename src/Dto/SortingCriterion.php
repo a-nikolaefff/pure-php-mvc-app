@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-enum SortingCriterion
+enum SortingCriterion: string
 {
-    case UserName;
-    case UserEmail;
-    case Description;
-    case IsDone;
-    case CreatedAt;
+    case USER_NAME = 'user_name';
+    case USER_EMAIL = 'user_email';
+    case DESCRIPTION = 'description';
+    case IS_DONE = 'is_done';
+    case CREATED_AT = 'created_at';
 }
