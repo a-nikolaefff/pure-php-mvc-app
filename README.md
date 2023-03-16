@@ -26,4 +26,4 @@ docker-compose up
  
 Разработанное приложение не использует PHP-фреймворков. Из библиотек использованы только pdo и mbstring. Интерфейс реализован на Bootstrap.
 
-![Интерфейс](https://https://github.com/A-Nikolaefff/pure-php-mvc-app/raw/master/readme_assets/1.png)
+![Интерфейс](https://github.com/A-Nikolaefff/pure-php-mvc-app/blob/master/readme_assets/1.png)
