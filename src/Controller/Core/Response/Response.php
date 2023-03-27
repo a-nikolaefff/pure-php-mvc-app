@@ -46,6 +46,12 @@ class Response implements ResponseInterface
         return $this;
     }
 
+    public function withHeader(string $name, string $value): static
+    {
+        $this->headers[$name] = $value;
+        return $this;
+    }
+
     public function getStatusCode(): int
     {
         return $this->status;

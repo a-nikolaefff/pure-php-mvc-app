@@ -42,6 +42,17 @@ interface ResponseInterface
      */
     public function withFormat(string $format): static;
 
+
+    /**
+     * Add the header to the response
+     *
+     * @param string $name "Header name"
+     * @param string $value "Header value"
+     *
+     * @return static The same response object
+     */
+    public function withHeader(string $name, string $value): static;
+
     /**
      * Get the status of the response
      *

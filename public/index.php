@@ -7,6 +7,7 @@ use App\Controller\Core\Request\RequestInterface;
 use App\Controller\Core\Response\ResponseInterface;
 use App\Controller\Core\Session\SessionInterface;
 use App\Controller\IndexController;
+use App\Controller\NotFoundController;
 use App\Controller\SessionCreatePageController;
 use App\Controller\SessionDeleteController;
 use App\Controller\SessionNewController;
@@ -57,6 +58,7 @@ $taskCreatePageController = new TaskCreatePageController(
 $taskEditPageController = new TaskEditPageController($renderer, $taskService);
 $taskUpdateController = new TaskUpdateController($renderer, $taskService);
 $taskDeleteController = new TaskDeleteController($renderer, $taskService);
+$notFoundController = new NotFoundController($renderer);
 
 $app = new Application();
 
@@ -142,6 +144,14 @@ $app->delete('/tasks/{id}', function (
     SessionInterface $session
 ) use ($taskDeleteController) {
     return $taskDeleteController->dispatch($request, $response, $session);
+});
+
+$app->notFound(function (
+    RequestInterface $request,
+    ResponseInterface $response,
+    SessionInterface $session
+) use ($notFoundController) {
+    return $notFoundController->dispatch($request, $response, $session);
 });
 
 $app->run();

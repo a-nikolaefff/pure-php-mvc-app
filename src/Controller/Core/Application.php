@@ -19,6 +19,7 @@ final class Application
      * @var array
      */
     private array $handlers = [];
+    private $notFoundHandler;
 
     /**
      * Set a handler function for GET requests with a specific route
@@ -102,6 +103,19 @@ final class Application
         $this->handlers[] = [$updatedRoute, $method, $handler];
     }
 
+
+    /**
+     * Set a handler function for the case when no handler is found
+     *
+     * @param $handler "The function to be executed when no handler is found."
+     *
+     * @return void
+     */
+    public function notFound(callable $handler): void
+    {
+        $this->notFoundHandler = $handler;
+    }
+
     /**
      * Start processing requests
      *
@@ -120,8 +134,10 @@ final class Application
         } else {
             $method = $_SERVER['REQUEST_METHOD'];
         }
+        $handler = null;
+        $attributes = null;
         foreach ($this->handlers as $item) {
-            [$route, $handlerMethod, $handler] = $item;
+            [$route, $handlerMethod, $handlerFunction] = $item;
             $preparedRoute = str_replace('/', '\/', $route);
             $matches = [];
             if ($method === $handlerMethod
@@ -134,26 +150,28 @@ final class Application
                 $attributes = array_filter($matches, function ($key) {
                     return !is_numeric($key);
                 }, ARRAY_FILTER_USE_KEY);
-
-                $request = new Request(
-                    $method,
-                    $uri,
-                    getallheaders(),
-                    $_GET,
-                    $attributes,
-                    $_POST
-                );
-                $response = new Response();
-                $session = new Session();
-
-                $response = $handler($request, $response, $session);
-                http_response_code($response->getStatusCode());
-                foreach ($response->getHeaderLines() as $header) {
-                    header($header);
-                }
-                echo $response->getBody();
-                return;
+                $handler = $handlerFunction;
+                break;
             }
         }
+        $handler = $handler ?? $this->notFoundHandler;
+        $attributes = $attributes ?? [];
+        $request = new Request(
+            $method,
+            $uri,
+            getallheaders(),
+            $_GET,
+            $attributes,
+            $_POST
+        );
+        $response = new Response();
+        $session = new Session();
+        $response = $handler($request, $response, $session);
+
+        http_response_code($response->getStatusCode());
+        foreach ($response->getHeaderLines() as $header) {
+            header($header);
+        }
+        echo $response->getBody();
     }
 }
