@@ -36,13 +36,18 @@ class TaskUpdateController extends TaskController
             try {
                 $isUpdateSuccessful = $this->taskService->update($task);
             } catch (Exception $e) {
-                $errors[] = $e->getMessage();
+                /*
+                If an error occurs, the isUpdateSuccessful flag remains false
+                 and therefore the code below will send a 500 response
+                */
             }
             if ($isUpdateSuccessful) {
                 return $response->withRedirect('/tasks');
             } else {
-                $errors[]
-                    = "An internal application error has occurred - failed to update data in the database";
+                return $response
+                    ->withBody('500 Internal Server Error')
+                    ->withStatus(500)
+                    ->withHeader('Content-Type', 'text/plain');
             }
         }
         $params = [

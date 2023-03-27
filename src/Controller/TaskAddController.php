@@ -29,11 +29,18 @@ class TaskAddController extends TaskController
             if ($isInsertionSuccessful) {
                 return $response->withRedirect('/tasks');
             } else {
-                $errors[]
-                    = "An internal application error has occurred - failed to add data to the database";
+                return $response
+                    ->withBody('500 Internal Server Error')
+                    ->withStatus(500)
+                    ->withHeader('Content-Type', 'text/plain');
             }
         }
-        $params = ['errors' => $errors];
+        $session->start();
+        $adminName = $session->get('admin-name');
+        $params = [
+            'adminName' => $adminName,
+            'errors' => $errors
+        ];
         return $response->withBody(
             $this->renderer->render('tasks/new', $params)
         );

@@ -52,8 +52,6 @@ class TaskGetAllController extends TaskController
         $page = (int)max((int)($queryParams['page'] ?? 1), 1);
         $page = (int)min($page, $pageTotalCount);
 
-        $errors = [];
-        $tasks = [];
         try {
             $tasks = $this->taskService->getAll(
                 $sortingCriterion,
@@ -62,7 +60,10 @@ class TaskGetAllController extends TaskController
                 $limit
             );
         } catch (Exception $e) {
-            $errors[] = $e->getMessage();
+            return $response
+                ->withBody('500 Internal Server Error')
+                ->withStatus(500)
+                ->withHeader('Content-Type', 'text/plain');
         }
         $params = [
             'adminName' => $adminName,
@@ -71,7 +72,6 @@ class TaskGetAllController extends TaskController
             'orderBy' => $sortingOrder,
             'currentPage' => $page,
             'pageTotalCount' => $pageTotalCount,
-            'errors' => $errors
         ];
         return $response->withBody(
             $this->renderer->render('tasks/index', $params)
