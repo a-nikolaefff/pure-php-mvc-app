@@ -44,7 +44,7 @@ $dbContext->setTaskRepository($taskRepository);
 $adminService = new AdminService($dbContext);
 $taskService = new TaskService($dbContext);
 
-$renderer = new Renderer('/var/www/src/templates', '_layout');
+$renderer = new Renderer('/var/www/app/templates', '_layout');
 
 $indexController = new IndexController($renderer);
 $sessionCreatePageController = new SessionCreatePageController($renderer);

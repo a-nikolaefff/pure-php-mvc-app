@@ -1,4 +1,4 @@
 /.idea/
-/vendor/
-/bin/
-/data/
+databases/postgresql/data
+src/vendor
+Makefile
